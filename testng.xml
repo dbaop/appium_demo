@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<suite name="App自动化测试">
+    <test name="安卓APP测试">
+        <classes>
+            <class name="com.appauto.testcase.DemoTest"/>
+        </classes>
+    </test>
+</suite>
