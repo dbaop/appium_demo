@@ -16,6 +16,7 @@
         <selenium.version>4.13.0</selenium.version>
         <appium.java.client>8.5.1</appium.java.client>
         <cucumber.version>7.15.0</cucumber.version>
+        <report>false</report>
     </properties>
 
     <!-- 锁定 Selenium 版本为 4.15.0，避免 java-client 8.5.1 的区间依赖解析到过新的 Selenium
@@ -96,6 +97,8 @@
                     <!-- Allure 结果输出到 target/allure-results（mvn clean 会清掉） -->
                     <systemPropertyVariables>
                         <allure.results.directory>${project.build.directory}/allure-results</allure.results.directory>
+                        <!-- 传给测试 JVM，用于触发 SimpleReportPlugin 生成静态报告 -->
+                        <report>${report}</report>
                     </systemPropertyVariables>
                 </configuration>
             </plugin>

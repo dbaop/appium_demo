@@ -27,6 +27,7 @@ src/test/
 │   ├── steps/StepDefinitions.java    # 步骤定义：Gherkin → 代码 + 生命周期钩子
 │   ├── base/BaseTest.java            # 驱动 + 通用操作（点击/滑动/轮询等待/截图）
 │   ├── base/TestConfig.java          # 读取 config.properties
+│   ├── report/SimpleReportPlugin.java # 静态报告插件（-Dreport=true 时生成简单报告）
 │   └── page/HomePage.java            # 元素/坐标定位
 └── resources/
     ├── features/byr.feature          # Gherkin 场景（业务可读）
@@ -37,7 +38,7 @@ src/test/
 
 | 层 | 文件 | 示例 |
 |---|---|---|
-| 场景（业务语言） | `features/byr.feature` | `当我 点击桌面上的 BYR 图标` |
+| 场景（业务语言） | `features/byr.feature` | `当 点击桌面上的 BYR 图标` |
 | 步骤定义（胶水代码） | `steps/StepDefinitions.java` | `@When("点击桌面上的 BYR 图标")` |
 | 底层操作（复用） | `base/BaseTest.java` | `waitAndClick(byrIcon)` |
 
@@ -129,6 +130,19 @@ new ProcessBuilder("adb", "-s", udid,
 - 中文在控制台/日志显示成乱码（`����`）一般是**控制台编码问题**，class 文件里的字符串是正常 UTF-8，不影响运行
 - Cucumber 的 `.feature` 文件第一行要写 `# language: zh-CN`，否则中文关键字（功能/场景/当/那么）解析不了
 
+## 坑 7：Cucumber 中文关键字「当」写成了「当我」
+
+**现象**：跑测试报 `UndefinedStepException`，提示 `The step '我 点击...' is undefined`，测试没真正执行就失败（像「闪退」）。
+
+**原因**：Cucumber 中文关键字里 When 是 **`当`**，不是 `当我`。`.feature` 里写 `当我 点击...`，会被解析成关键字 `当` + 步骤文本 `我 点击...`，跟 `@When("点击...")` 对不上。
+
+**解决**：`.feature` 里用 `当`（不要带「我」）：
+```gherkin
+当 点击桌面上的 BYR 图标   # 正确：关键字「当」+ 文本「点击...」
+```
+
+中文关键字对照：功能(Feature) / 场景(Scenario) / 假如(Given) / 当(When) / 那么(Then) / 而且(And) / 但是(But)。
+
 ---
 
 # 二、常用命令速查
@@ -141,6 +155,9 @@ appium
 
 # 跑测试（Cucumber 场景，结果自动采集到 target/allure-results）
 mvn test
+
+# 跑测试并生成简单静态报告到 src/test/resources/reports/（含操作步骤，双击就能看）
+mvn test -Dreport=true
 
 # 生成 Allure HTML 报告（到 target/allure-report）
 mvn allure:report
@@ -208,8 +225,12 @@ set JAVA_HOME=D:\Program Files\Java\jdk-26.0.2.1
 
 ```bash
 appium          # 终端 1
-mvn test        # 终端 2
-mvn allure:report
+mvn test        # 终端 2：跑测试
+mvn allure:report   # 出 Allure 报告
 ```
+
+两种报告模式（可二选一，也可都用）：
+- **Allure（默认）**：`mvn test` 采集结果 → `mvn allure:report` / `mvn allure:serve` 出可视化报告（需起服务才能看）
+- **简单静态报告**：`mvn test -Dreport=true` 生成 `src/test/resources/reports/mobile_case_时间.html`（双击就能看，含用例数/成功率/状态/耗时/操作步骤）
 
 跑完看 `target/` 下的截图（`1_home_page.png`、`2_discover_page.png`、`3_back_to_launcher.png`）和 `target/allure-report/index.html` 报告（报告会按 Gherkin 的「功能/场景」组织）。

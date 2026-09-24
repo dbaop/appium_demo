@@ -11,7 +11,8 @@ import io.cucumber.testng.CucumberOptions;
         glue = "com.appauto.steps",
         plugin = {
                 "pretty",
-                "io.qameta.allure.cucumber7jvm.AllureCucumber7Jvm"
+                "io.qameta.allure.cucumber7jvm.AllureCucumber7Jvm",
+                "com.appauto.report.SimpleReportPlugin"
         },
         monochrome = true
 )
