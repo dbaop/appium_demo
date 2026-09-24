@@ -7,3 +7,6 @@ allure-report/
 # IDE
 .idea/
 *.iml
+
+# Allure CLI 下载目录（可随时重新下载，不进 git）
+.allure/
