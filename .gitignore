@@ -4,7 +4,6 @@ target/
 # Allure 报告产物
 allure-results/
 allure-report/
-*.alure
 # IDE
 .idea/
 *.iml
